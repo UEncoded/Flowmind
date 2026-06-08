@@ -35,8 +35,8 @@ export default function LandingPage() {
           <span className="font-display font-bold text-text-primary">FlowMind</span>
         </div>
         <div className="flex items-center gap-3">
-          <Link to="/login"  className="btn-ghost text-sm px-4">Sign in</Link>
-          <Link to="/signup" className="btn-primary h-9 px-5 text-sm">Get started free</Link>
+          <Link to="/login"  className="btn-ghost text-sm px-4 flex items-center">Sign in</Link>
+          <Link to="/signup" className="btn-primary h-9 px-5 text-sm flex items-center justify-center">Get started free</Link>
         </div>
       </nav>
 
@@ -50,13 +50,13 @@ export default function LandingPage() {
           <span className="text-gradient">Organised.</span>
         </h1>
         <p className="text-text-secondary text-lg leading-relaxed mb-8 max-w-xl mx-auto">
-          FlowMind is a smart personal workspace for <em>everyone</em> — from remote workers and students to homemakers and job seekers. One app to manage tasks, habits, meetings, and your day.
+          FlowMind is a smart personal workspace for <em>everyone</em>  from remote workers and students to homemakers and job seekers. One app to manage tasks, habits, meetings, and your day.
         </p>
         <div className="flex flex-col xs:flex-row gap-3 justify-center">
-          <Link to="/signup" className="btn-primary h-12 px-7 text-base">
+          <Link to="/signup" className="btn-primary h-12 px-7 text-base flex items-center justify-center">
             Start for free <ArrowRight size={16} className="inline ml-1"/>
           </Link>
-          <Link to="/login" className="btn-secondary h-12 px-7 text-base">Sign in</Link>
+          <Link to="/login" className="btn-secondary h-12 px-7 text-base flex items-center justify-center">Sign in</Link>
         </div>
         <p className="text-xs text-text-muted mt-4">No credit card required · Free tier forever</p>
       </div>

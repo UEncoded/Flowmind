@@ -4,6 +4,8 @@ import { Crown, Zap, Star, Check, Flame } from 'lucide-react'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
 
+const API = (import.meta.env as any).VITE_API_URL || 'http://localhost:3001'
+
 interface Plan {
   id: string; name: string; price: number
   currency?: string; interval?: string; badge?: string | null
@@ -29,18 +31,20 @@ export default function SubscriptionTab() {
   const qc = useQueryClient()
 
   const { data: plans = [], isLoading } = useQuery<Plan[]>({
-    queryKey: ['subscription-plans'],
-    queryFn:  () => axios.get('/api/subscription/plans').then(r => r.data),
-  })
+  queryKey: ['subscription-plans'],
+  queryFn:  () => axios.get(`${API}/api/subscription/plans`).then(r => r.data),
+  retry: 2,
+  staleTime: 60_000,
+})
 
   const { data: status } = useQuery<AiStatus>({
     queryKey: ['ai-status'],
-    queryFn:  () => axios.get('/api/ai/status').then(r => r.data),
+    queryFn:  () => axios.get(`${API}/api/ai/status`).then(r => r.data),
   })
 
   const subscribe = useMutation({
     mutationFn: (planId: string) =>
-      axios.post('/api/subscription/activate', {
+      axios.post(`${API}/api/subscription/activate`, {
         plan:             planId,
         paymentProvider:  'manual',
         paymentReference: `manual-${planId}-${Date.now()}`,
