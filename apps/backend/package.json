@@ -16,7 +16,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.24.0",
     "@flowmind/shared": "*",
-    "@prisma/client": "^5.14.0",
+    "@prisma/client": "5.14.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -39,7 +39,7 @@
     "@types/node": "^20.14.0",
     "@types/node-cron": "^3.0.11",
     "@types/uuid": "^10.0.0",
-    "prisma": "^5.14.0",
+   "prisma": "5.14.0",
     "tsx": "^4.13.3",
     "typescript": "^5.4.5"
   }
