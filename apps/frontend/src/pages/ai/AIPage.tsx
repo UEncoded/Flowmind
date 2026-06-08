@@ -20,7 +20,7 @@ const QUICK_PROMPTS: Record<string, string[]> = {
   student:        ['Help me plan my study schedule','I have 3 exams this week — prioritise','Explain the Pomodoro technique'],
   business_owner: ['Prioritise my business tasks today','Write a 15-min leadership agenda','How do I avoid decision fatigue?'],
   homemaker:      ['Plan my week around school pickups','Help me meal plan for 5 days','How do I find time for myself?'],
-  job_seeker:     ['Structure my job search routine','Help me track my applications','Motivate me — I've had 10 rejections'],
+  job_seeker:     ['Structure my job search routine','Help me track my applications','Motivate me, I have had 10 rejections'],
   freelancer:     ['Help me invoice and track clients','Set my rates for a new project','How do I find deep work time?'],
 }
 
@@ -28,7 +28,7 @@ const DEFAULT_PROMPTS = [
   'Prioritise my tasks for today',
   'Give me a deep work strategy',
   'Help me plan my week',
-  'I'm feeling overwhelmed — help',
+  'I am feeling overwhelmed, help',,
 ]
 
 export default function AIPage() {
