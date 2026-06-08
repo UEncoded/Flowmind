@@ -1,0 +1,329 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── USERS ───────────────────────────────────────────────────────────────────
+
+model User {
+  id              String       @id @default(uuid())
+  email           String       @unique
+  name            String
+  passwordHash    String
+  avatarUrl       String?
+  timezone        String       @default("UTC")
+  persona         UserPersona  @default(other)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // ── Subscription ──────────────────────────────────────
+  plan                 Plan        @default(FREE)
+  planStatus           PlanStatus  @default(ACTIVE)
+  currentPeriodEnd     DateTime?
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+
+  // ── AI access ─────────────────────────────────────────
+  aiMode               AiMode      @default(APP_QUOTA)
+  encryptedApiKey      String?
+
+  // ── Trial (free users — 2 lifetime messages) ──────────
+  aiTrialUsed          Int         @default(0)
+  aiTrialLimit         Int         @default(2)
+
+  // ── Monthly credits (Pro / Premium users) ─────────────
+  aiCreditsRemaining   Int         @default(0)
+  aiCreditsTotal       Int         @default(0)
+  aiCreditsResetAt     DateTime?
+
+  // Relations
+  refreshTokens   RefreshToken[]
+  tasks           Task[]
+  habits          Habit[]
+  habitLogs       HabitLog[]
+  meetings        Meeting[]
+  focusSessions   FocusSession[]
+  moodLogs        MoodLog[]
+  aiMessages      AiMessage[]
+  aiUsageLogs     AiUsageLog[]
+  notifications   Notification[]
+  settings        UserSettings?
+  subscription    Subscription?
+
+  @@map("users")
+}
+
+enum Plan {
+  FREE
+  PRO
+  PREMIUM
+}
+
+enum PlanStatus {
+  ACTIVE
+  CANCELLED
+  PAST_DUE
+  EXPIRED
+}
+
+enum AiMode {
+  APP_QUOTA
+  BYOK
+}
+
+enum UserPersona {
+  remote_worker
+  hybrid_worker
+  onsite_worker
+  student
+  business_owner
+  homemaker
+  job_seeker
+  freelancer
+  other
+}
+
+// ─── SUBSCRIPTION ────────────────────────────────────────────────────────────
+
+model Subscription {
+  id                   String     @id @default(uuid())
+  userId               String     @unique
+  user                 User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan                 Plan
+  status               PlanStatus @default(ACTIVE)
+  creditsPerMonth      Int        @default(500)
+  currentPeriodStart   DateTime
+  currentPeriodEnd     DateTime
+  cancelAtPeriodEnd    Boolean    @default(false)
+  paymentProvider      String?
+  paymentReference     String?
+  createdAt            DateTime   @default(now())
+  updatedAt            DateTime   @updatedAt
+
+  @@map("subscriptions")
+}
+
+// ─── REFRESH TOKENS ──────────────────────────────────────────────────────────
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("refresh_tokens")
+}
+
+model UserSettings {
+  id                 String  @id @default(uuid())
+  userId             String  @unique
+  user               User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  theme              String  @default("dark")
+  pomodoroWork       Int     @default(25)
+  pomodoroBreak      Int     @default(5)
+  pomodoroSessions   Int     @default(4)
+  notifEmail         Boolean @default(true)
+  notifPush          Boolean @default(true)
+  notifMeetingRemind Int     @default(15)
+  weekStartsOn       Int     @default(1)
+  dailyGoalHours     Int     @default(6)
+
+  @@map("user_settings")
+}
+
+// ─── TASKS ───────────────────────────────────────────────────────────────────
+
+model Task {
+  id          String     @id @default(uuid())
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  status      TaskStatus @default(TODO)
+  priority    Priority   @default(MEDIUM)
+  category    String?
+  dueDate     DateTime?
+  completedAt DateTime?
+  order       Int        @default(0)
+  tags        String[]   @default([])
+  parentId    String?
+  parent      Task?      @relation("subtasks", fields: [parentId], references: [id])
+  subtasks    Task[]     @relation("subtasks")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@map("tasks")
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+  CANCELLED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+// ─── HABITS ──────────────────────────────────────────────────────────────────
+
+model Habit {
+  id           String    @id @default(uuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String
+  description  String?
+  icon         String    @default("⭐")
+  color        String    @default("#6c63ff")
+  frequency    Frequency @default(DAILY)
+  targetDays   Int[]     @default([1, 2, 3, 4, 5, 6, 7])
+  reminderTime String?
+  isActive     Boolean   @default(true)
+  order        Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  logs         HabitLog[]
+
+  @@map("habits")
+}
+
+enum Frequency {
+  DAILY
+  WEEKLY
+  CUSTOM
+}
+
+model HabitLog {
+  id        String   @id @default(uuid())
+  habitId   String
+  habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      DateTime @db.Date
+  completed Boolean  @default(true)
+  note      String?
+  createdAt DateTime @default(now())
+
+  @@unique([habitId, date])
+  @@map("habit_logs")
+}
+
+// ─── FOCUS SESSIONS ──────────────────────────────────────────────────────────
+
+model FocusSession {
+  id                 String    @id @default(uuid())
+  userId             String
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mode               String    @default("pomodoro")
+  workMinutes        Int
+  breakMinutes       Int
+  completedPomodoros Int       @default(0)
+  totalMinutes       Int       @default(0)
+  taskNote           String?
+  startedAt          DateTime
+  endedAt            DateTime?
+  createdAt          DateTime  @default(now())
+
+  @@map("focus_sessions")
+}
+
+// ─── MEETINGS ────────────────────────────────────────────────────────────────
+
+model Meeting {
+  id           String        @id @default(uuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title        String
+  description  String?
+  startTime    DateTime
+  endTime      DateTime
+  location     String?
+  meetingUrl   String?
+  attendees    String[]      @default([])
+  status       MeetingStatus @default(SCHEDULED)
+  recordingUrl String?
+  transcript   String?
+  aiSummary    String?
+  actionItems  Json?
+  reminderSent Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@map("meetings")
+}
+
+enum MeetingStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+// ─── MOOD ────────────────────────────────────────────────────────────────────
+
+model MoodLog {
+  id       String   @id @default(uuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mood     Int
+  energy   Int?
+  stress   Int?
+  note     String?
+  loggedAt DateTime @default(now())
+
+  @@map("mood_logs")
+}
+
+// ─── AI ──────────────────────────────────────────────────────────────────────
+
+model AiMessage {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionId String
+  role      String
+  content   String
+  context   String?
+  createdAt DateTime @default(now())
+
+  @@map("ai_messages")
+}
+
+model AiUsageLog {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mode      AiMode
+  tokens    Int      @default(0)
+  date      DateTime @db.Date @default(now())
+  createdAt DateTime @default(now())
+
+  @@map("ai_usage_logs")
+}
+
+// ─── NOTIFICATIONS ───────────────────────────────────────────────────────────
+
+model Notification {
+  id     String   @id @default(uuid())
+  userId String
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type   String
+  title  String
+  body   String
+  data   Json?
+  read   Boolean  @default(false)
+  sentAt DateTime @default(now())
+
+  @@map("notifications")
+}

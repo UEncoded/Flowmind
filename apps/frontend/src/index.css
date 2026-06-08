@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light theme base */
+    --bg-base:    #f5f6fa;
+    --bg-subtle:  #ffffff;
+    --bg-muted:   #f0efff;
+    --bg-card:    #ffffff;
+    --bg-hover:   #f8f7ff;
+
+    --border-faint:   #f3f3f8;
+    --border-subtle:  #ebebf0;
+    --border-default: #e0dff0;
+    --border-strong:  #c4c0e8;
+
+    --text-primary:   #1a1a2e;
+    --text-secondary: #6b6b8a;
+    --text-muted:     #ababc4;
+    --text-disabled:  #d0d0e0;
+
+    --accent:         #6c5ce7;
+    --accent-light:   #8b7ff5;
+    --accent-lighter: #a29bfe;
+    --accent-bg:      #f0efff;
+    --accent-border:  #e0ddff;
+
+    color-scheme: light;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html { height: 100%; }
+
+  body {
+    @apply bg-bg-base text-text-primary;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    overscroll-behavior: none;
+  }
+
+  #root { min-height: 100vh; }
+
+  /* Light theme scrollbars */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #d0d0e0; border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: #ababc4; }
+
+  :focus-visible { outline: 2px solid #6c5ce7; outline-offset: 2px; }
+
+  .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+  .pt-safe { padding-top:    env(safe-area-inset-top); }
+}
+
+@layer utilities {
+  .font-display { font-family: 'Syne', system-ui, sans-serif; }
+
+  /* Gradient text */
+  .text-gradient {
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-bg-card border border-border-subtle rounded-card;
+  }
+  .card-hover {
+    @apply card transition-all duration-200 hover:border-accent-border hover:shadow-card-hover cursor-pointer;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply h-11 px-5 rounded-btn font-semibold text-sm text-white transition-all
+           disabled:opacity-50 disabled:cursor-not-allowed active:scale-95;
+    background: #6c5ce7;
+  }
+  .btn-primary:hover { background: #5a4dd6; }
+
+  .btn-secondary {
+    @apply h-11 px-5 rounded-btn font-medium text-sm text-text-secondary border border-border-default
+           bg-transparent transition-all hover:border-accent-border hover:text-accent hover:bg-accent-bg
+           disabled:opacity-50 active:scale-95;
+  }
+  .btn-ghost {
+    @apply h-9 px-4 rounded-btn font-medium text-sm text-text-muted
+           transition-all hover:bg-bg-hover hover:text-text-secondary active:scale-95;
+  }
+  .btn-icon {
+    @apply w-9 h-9 rounded-btn flex items-center justify-center text-text-muted
+           transition-all hover:bg-bg-hover hover:text-text-secondary active:scale-95;
+  }
+
+  /* Inputs */
+  .input {
+    @apply w-full h-11 px-4 bg-bg-base border border-border-subtle rounded-btn
+           text-text-primary text-sm placeholder-text-disabled
+           focus:outline-none focus:border-accent focus:bg-white transition-colors;
+  }
+  .input-sm {
+    @apply w-full h-9 px-3 bg-bg-base border border-border-subtle rounded-lg
+           text-text-primary text-sm placeholder-text-disabled
+           focus:outline-none focus:border-accent focus:bg-white transition-colors;
+  }
+
+  /* Badges */
+  .badge           { @apply text-xs font-semibold px-2 py-0.5 rounded-pill; }
+  .badge-accent    { @apply badge bg-accent-bg text-accent; }
+  .badge-teal      { @apply badge bg-teal-bg text-teal; }
+  .badge-coral     { @apply badge bg-coral-bg text-coral; }
+  .badge-amber     { @apply badge bg-amber-bg text-amber; }
+  .badge-green     { @apply badge bg-green-bg text-green; }
+  .badge-orange    { @apply badge bg-orange-bg text-orange; }
+}
+
+/* Stat card bottom accent line */
+.stat-line {
+  height: 3px;
+  border-radius: 2px;
+  margin-top: 14px;
+  background: #ebebf0;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
+}
+
+/* Mobile safe area */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .mobile-nav { padding-bottom: env(safe-area-inset-bottom); }
+}
