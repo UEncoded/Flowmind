@@ -50,7 +50,7 @@ export default function LandingPage() {
           <span className="text-gradient">Organised.</span>
         </h1>
         <p className="text-text-secondary text-lg leading-relaxed mb-8 max-w-xl mx-auto">
-          FlowMind is a smart personal workspace for <em>everyone</em>  from remote workers and students to homemakers and job seekers. One app to manage tasks, habits, meetings, and your day.
+          FlowMind is a smart personal workspace for <em>everyone</em>  from remote workers and students to homemakers, business professionals, and job seekers. One app to manage tasks, habits, meetings, and your day.
         </p>
         <div className="flex flex-col xs:flex-row gap-3 justify-center">
           <Link to="/signup" className="btn-primary h-12 px-7 text-base flex items-center justify-center">
