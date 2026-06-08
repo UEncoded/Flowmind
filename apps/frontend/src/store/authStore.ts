@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware'
 import axios from 'axios'
 import type { User, AuthTokens, UserPersona } from '@flowmind/shared'
 
-const API = import.meta.env.VITE_API_URL || ''
+const API = (import.meta.env as any).VITE_API_URL || 'http://localhost:3001'
 
 interface AuthState {
   user:         User | null
