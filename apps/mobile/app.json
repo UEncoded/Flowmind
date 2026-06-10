@@ -2,6 +2,7 @@
   "expo": {
     "name": "FlowMind",
     "slug": "flowmind",
+    "owner": "kosichinaza",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -53,7 +54,7 @@
     "experiments": { "typedRoutes": true },
     "extra": {
       "router": { "origin": false },
-      "eas": { "projectId": "your-eas-project-id" }
+      "eas": { "projectId": "e3733155-8851-4a88-8288-441f0d72dc73" }
     }
   }
 }

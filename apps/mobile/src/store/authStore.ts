@@ -11,8 +11,7 @@ const secureStorage = {
   removeItem: (key: string) => SecureStore.deleteItemAsync(key),
 }
 
-// Update this to your deployed API URL in production
-const API = 'http://192.168.0.176:3001'
+const API = 'https://flowmind-backend-64ix.onrender.com'
 
 interface AuthState {
   user:         User | null
