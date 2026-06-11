@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import * as SecureStore from 'expo-secure-store'
 import axios from 'axios'
-import type { User, UserPersona, AuthTokens } from '@flowmind/shared'
+import type { User, AuthTokens, UserPersona } from '../constants/shared'
 
 // ─── Secure storage adapter for Zustand persist ───────────
 const secureStorage = {
@@ -88,7 +88,7 @@ export const useAuthStore = create<AuthState>()(
   )
 )
 
-// Axios interceptors — same as web
+// Axios interceptors
 axios.interceptors.request.use(config => {
   const token = useAuthStore.getState().accessToken
   if (token && config.headers) config.headers.Authorization = `Bearer ${token}`

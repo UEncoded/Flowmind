@@ -8,9 +8,23 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import { Colors, Spacing, Radius, FontSize } from '../../src/constants/theme'
 import { useAuthStore } from '../../src/store/authStore'
-import { PERSONA_LABELS, type UserPersona } from '@flowmind/shared'
+
 
 const API = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001'
+
+type UserPersona = 'remote_worker' | 'hybrid_worker' | 'onsite_worker' | 'student' | 'business_owner' | 'homemaker' | 'job_seeker' | 'freelancer' | 'other'
+
+const PERSONA_LABELS: Record<UserPersona, string> = {
+  remote_worker:  'Remote Worker',
+  hybrid_worker:  'Hybrid Worker',
+  onsite_worker:  'On-site Worker',
+  student:        'Student',
+  business_owner: 'Business Owner',
+  homemaker:      'Homemaker / Parent',
+  job_seeker:     'Job Seeker',
+  freelancer:     'Freelancer / Self-employed',
+  other:          'Other',
+}
 
 interface Message { id: string; role: 'user'|'assistant'; content: string }
 
